@@ -33,15 +33,6 @@ Handles creation of new tasks based on next reccurance of the tasks. This can be
 Handles sending user defined notifications. Can be improved by intergrating different notification tools.
 Need better details on how notification can be handled.
 
-### Steps to start api service
-
-CD into todo-app-ui dir
-
-Run docker-compose -f docker-compose-ui.yml up
-
-On Successfull build
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
 ## Scope of Improvements
 
 1. Allow for reminders based on priority.
