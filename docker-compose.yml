@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+    todoflaskapiservice:
+        image: todo-flask-api-service
+        restart: unless-stopped
+        build:
+            context: todo-flask-api-service
+            dockerfile: ./Dockerfile
+        ports:
+            - 5010
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "20m"
+                max-file: "5"

@@ -1,0 +1,13 @@
+SQLAlchemy
+postgres
+Flask
+Flask-Migrate
+python-dateutil
+flask-moment
+flask-wtf
+flask_sqlalchemy
+psycopg2
+psycopg2-binary
+flask-cors
+schedule
+Flask-Testing
