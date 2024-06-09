@@ -1,0 +1,37 @@
+A summary of the backend and frontend application, including the PostgreSQL database running in Docker containers.
+
+Backend Application (Flask) 
+
+Features
+
+Task Management: Create, read, update, and delete tasks.
+Recurring Tasks: Support for daily, weekly, and custom recurring tasks. Automatically generate new instances based on recurrence rules.
+Reminders: Set and manage reminders for tasks, with customizable notification preferences.
+
+Key Components
+
+Flask Application: The main web application framework.
+SQLAlchemy: ORM for database interaction.
+Flask-Migrate: For handling database migrations.
+PostgreSQL: Database for storing task and reminder data.
+
+Endpoints
+
+/tasks (GET, POST): List all tasks or create a new task.
+/tasks/<id> (GET, PUT, DELETE): Retrieve, update, or delete a specific task.
+/tasks/<id>/reminders (GET, POST): List all reminders for a task or create a new reminder.
+
+Frontend Application (React with MUI)
+
+Features
+
+Task List: Display a scrollable list of tasks.
+Task Details: Show task details in a dialog when a task is clicked.
+Add Task: Button to add new tasks, positioned at the top-right corner of the task list.
+Responsive Design: UI components styled with Material-UI for a consistent and modern look.
+
+Key Components
+
+TaskList: Displays the list of tasks.
+TaskDialog: Shows details of a selected task.
+AddTaskButton: Button to add new tasks, positioned at the top-right corner.
