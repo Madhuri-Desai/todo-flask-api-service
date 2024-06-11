@@ -14,21 +14,22 @@ def send_notification(reminder):
 
 
 def reminder_worker():
-        while True:
-            now = datetime.now()
-            print(f"Running notification service at {now}")
-            try:
-                reminders_to_send = Reminder.query.filter(Reminder.remind_at <= now, Reminder.sent == False).all()
-                print(len(reminders_to_send))
-                for reminder in reminders_to_send:
-                    send_notification(reminder)
-                    reminder.sent = True
-                    db.session.commit()
-            except Exception as e:
-                print("Error fetching reminder list")
-                print(e)
-            
-            time.sleep(60)
+        with app.app_context():
+            while True:
+                now = datetime.now()
+                print(f"Running notification service at {now}")
+                try:
+                    reminders_to_send = Reminder.query.filter(Reminder.remind_at <= now, Reminder.sent == False).all()
+                    print(len(reminders_to_send))
+                    for reminder in reminders_to_send:
+                        send_notification(reminder)
+                        reminder.sent = True
+                        db.session.commit()
+                except Exception as e:
+                    print("Error fetching reminder list")
+                    print(e)
+                
+                time.sleep(60)
 
 Thread(target=reminder_worker, daemon=False).start()
 
