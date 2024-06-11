@@ -1,40 +1,31 @@
-import time
 from app import create_app
-from models import db, TodoItem
+from models import Task,db
 from datetime import datetime
-import schedule
-
-app = create_app()
-app.app_context().push()
+import os
 
 def create_recurring_tasks():
+    print("Running Recurring task")
     now = datetime.now()
-    recurring_tasks = TodoItem.query.filter(TodoItem.next_occurrence <= now).all()
+    recurring_tasks = Task.query.filter(Task.next_occurrence <= now).all()
     for task in recurring_tasks:
-        new_task = TodoItem(
+        new_task = Task(
             title=task.title,
             description=task.description,
             due_date=task.next_occurrence,
             priority=task.priority,
             status='incomplete',
-            canceled=False,
+            cancelled=False,
             reminder=task.reminder,
             recurring=task.recurring,
             recurring_interval=task.recurring_interval
         )
         new_task.update_next_occurrence()
         task.update_next_occurrence()
+        print("Adding new task")
         db.session.add(new_task)
         db.session.commit()
 
-def job():
-    create_recurring_tasks()
-
-schedule.every().hour.at(":00").do(job)
-schedule.every().hour.at(":30").do(job)
-# schedule.every(5).minutes.do(job)
-# schedule.every().minute.at(":30").do(job)
-
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+if __name__ == '__main__':
+    app = create_app('config.default')
+    with app.app_context():
+        create_recurring_tasks()

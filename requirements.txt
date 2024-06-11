@@ -9,5 +9,6 @@ flask_sqlalchemy
 psycopg2
 psycopg2-binary
 flask-cors
-schedule
 Flask-Testing
+apscheduler
+requests

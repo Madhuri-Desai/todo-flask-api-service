@@ -1,7 +1,10 @@
 from datetime import datetime
 from flask import jsonify,request
-from app import app, db
+from app import  db
 from models import Reminder, Task
+from flask import Blueprint
+
+main = Blueprint('main', __name__)
 
 def parse_datetime(datetime_str):
     for fmt in ('%Y-%m-%dT%H:%M:%S', '%Y-%m-%d'):
@@ -11,7 +14,7 @@ def parse_datetime(datetime_str):
             pass
     raise ValueError(f"Time data '{datetime_str}' does not match format '%Y-%m-%dT%H:%M:%S' or '%Y-%m-%dT%H:%M'")
 
-@app.route('/getTask/<int:id>',methods = ['GET'])
+@main.route('/getTask/<int:id>',methods = ['GET'])
 def get_task(id):
     try:
         task = Task.query.get(id)
@@ -21,9 +24,10 @@ def get_task(id):
     except Exception as e:
         return("Error fetching tasks",400)
     
-@app.route('/getAllTasks',methods = ['GET'])
+@main.route('/getAllTasks',methods = ['GET'])
 def get_tasks():
     try:
+        checkData()
         tasks = Task.query.all()
         tasks_list = [{
         'id': task.id,
@@ -39,12 +43,13 @@ def get_tasks():
         } for task in tasks]
         response = jsonify(tasks_list)
         response.headers.add('Access-Control-Allow-Origin', '*')
+        response.status_code = 200
         return response
     except Exception as e:
         return("Error fetching tasks",400)
 
-    
-@app.route('/addTask', methods=['POST'])
+   
+@main.route('/addTask', methods=['POST'])
 def add_task():    
     try:
         data = request.json
@@ -63,12 +68,14 @@ def add_task():
             todo.update_next_occurrence()
         db.session.add(todo)
         db.session.commit()
-        return jsonify(todo.to_dict()), 201
+        response = jsonify(todo.to_dict())
+        response.status_code = 201
+        return response
     except Exception as e :
         return("Error adding task",500)
 
 
-@app.route('/editTask/<int:id>', methods=['PUT'])
+@main.route('/editTask/<int:id>', methods=['PUT'])
 def edit_task(id):
     try:
         data = request.json
@@ -92,7 +99,7 @@ def edit_task(id):
     except Exception as e:
         return("Error updating the task details",500)
 
-@app.route('/updateTaskStatus/<int:id>', methods=['PUT'])
+@main.route('/updateTaskStatus/<int:id>', methods=['PUT'])
 def update_task_status(id):
     try:
         data = request.json
@@ -105,7 +112,7 @@ def update_task_status(id):
     except Exception as e:
         return("Error updating the task details",500)
 
-@app.route('/updateTaskCancellation/<int:id>', methods=['PUT'])
+@main.route('/updateTaskCancellation/<int:id>', methods=['PUT'])
 def update_task_cancellation(id):
     try:
         data = request.json
@@ -118,7 +125,7 @@ def update_task_cancellation(id):
     except Exception as e:
         return("Error updating the task details",500)
 
-@app.route('/delete/<int:id>', methods=['DELETE'])
+@main.route('/delete/<int:id>', methods=['DELETE'])
 def delete_task(id):
     try:
         todo = Task.query.get(id)
@@ -130,12 +137,12 @@ def delete_task(id):
     except Exception as e:
         return("Error detelting the task",500)
 
-@app.route('/tasks/<int:task_id>/reminders', methods=['POST'])
+@main.route('/tasks/<int:task_id>/reminders', methods=['POST'])
 def create_reminder(task_id):
     try:
         data = request.json
         task = Task.query.get_or_404(task_id)
-        remind_at = datetime.strptime(data['remind_at'], '%Y-%m-%dT%H:%M:%S')
+        remind_at = datetime.strptime(data['remind_at'], '%Y-%m-%d').date()
         notification_method = data['notification_method']
 
         new_reminder = Reminder(task_id=task.id, remind_at=remind_at, notification_method=notification_method)
@@ -146,8 +153,7 @@ def create_reminder(task_id):
     except Exception as e:
         return("Error setting reminder",500)
 
-
-@app.route('/tasks/<int:task_id>/reminders', methods=['GET'])
+@main.route('/tasks/<int:task_id>/reminders', methods=['GET'])
 def get_reminders(task_id):
     try:
         task = Task.query.get_or_404(task_id)

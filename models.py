@@ -1,5 +1,7 @@
-from datetime import datetime, timedelta
-from app import db
+from datetime import timedelta
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 
 class Task(db.Model):
 
